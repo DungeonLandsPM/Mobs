@@ -8,6 +8,36 @@ use dungeonlands\mobs\entity\AbstractMob;
 use dungeonlands\mobs\entity\hostile\Blaze;
 use dungeonlands\mobs\entity\neutral\Bee;
 use dungeonlands\mobs\entity\passive\Allay;
+use dungeonlands\mobs\entity\passive\Axolotl;
+use dungeonlands\mobs\entity\passive\Bat;
+use dungeonlands\mobs\entity\passive\Camel;
+use dungeonlands\mobs\entity\passive\Cat;
+use dungeonlands\mobs\entity\passive\Chicken;
+use dungeonlands\mobs\entity\passive\Cod;
+use dungeonlands\mobs\entity\passive\Cow;
+use dungeonlands\mobs\entity\passive\Donkey;
+use dungeonlands\mobs\entity\passive\Frog;
+use dungeonlands\mobs\entity\passive\GlowSquid;
+use dungeonlands\mobs\entity\passive\Horse;
+use dungeonlands\mobs\entity\passive\Mooshroom;
+use dungeonlands\mobs\entity\passive\Mule;
+use dungeonlands\mobs\entity\passive\Ocelot;
+use dungeonlands\mobs\entity\passive\Parrot;
+use dungeonlands\mobs\entity\passive\Pig;
+use dungeonlands\mobs\entity\passive\Pufferfish;
+use dungeonlands\mobs\entity\passive\Rabbit;
+use dungeonlands\mobs\entity\passive\Salmon;
+use dungeonlands\mobs\entity\passive\Sheep;
+use dungeonlands\mobs\entity\passive\SkeletonHorse;
+use dungeonlands\mobs\entity\passive\Sniffer;
+use dungeonlands\mobs\entity\passive\SnowGolem;
+use dungeonlands\mobs\entity\passive\Squid;
+use dungeonlands\mobs\entity\passive\Strider;
+use dungeonlands\mobs\entity\passive\Tadpole;
+use dungeonlands\mobs\entity\passive\TropicalFish;
+use dungeonlands\mobs\entity\passive\Turtle;
+use dungeonlands\mobs\entity\passive\Villager;
+use dungeonlands\mobs\entity\passive\WanderingTrader;
 use pocketmine\block\BlockTypeIds;
 use pocketmine\data\bedrock\BiomeIds;
 use pocketmine\entity\Location;
@@ -48,7 +78,7 @@ class Manager
 
             foreach ($positions as $position) {
                 $biomeID = $worldInstance->getBiomeId($pos->getFloorX(), $pos->getFloorY(), $pos->getFloorZ());
-                $isNight = $worldInstance->getTime() > 13000;
+                $isNight = $worldInstance->getTime() < 13000;
                 $mobTable = $this->getMobsForBiome($worldInstance->getFolderName(), $biomeID, $isNight);
 
                 foreach ($mobTable as $mobName) {
@@ -246,14 +276,44 @@ class Manager
     private function getClassFor(string $name): ?string
     {
         return match ($name) {
-            //hostile
+            #HOSTILE
             "Blaze" => Blaze::class,
 
-            //neutral
+            #NEUTRAL
             "Bee" => Bee::class,
 
-            //passive
+            #PASSIVE
             "Allay" => Allay::class,
+            "Axolotl" => Axolotl::class,
+            "Bat" => Bat::class,
+            "Camel" => Camel::class,
+            "Cat" => Cat::class,
+            "Chicken" => Chicken::class,
+            "Cod" => Cod::class,
+            "Cow" => Cow::class,
+            "Donkey" => Donkey::class,
+            "Frog" => Frog::class,
+            "GlowSquid" => GlowSquid::class,
+            "Horse" => Horse::class,
+            "Mooshroom" => Mooshroom::class,
+            "Mule" => Mule::class,
+            "Ocelot" => Ocelot::class,
+            "Parrot" => Parrot::class,
+            "Pig" => Pig::class,
+            "Pufferfish" => Pufferfish::class,
+            "Rabbit" => Rabbit::class,
+            "Salmon" => Salmon::class,
+            "Sheep" => Sheep::class,
+            "SkeletonHorse" => SkeletonHorse::class,
+            "Sniffer" => Sniffer::class,
+            "SnowGolem" => SnowGolem::class,
+            "Squid" => Squid::class,
+            "Strider" => Strider::class,
+            "Tadpole" => Tadpole::class,
+            "TropicalFish" => TropicalFish::class,
+            "Turtle" => Turtle::class,
+            "Villager" => Villager::class,
+            "WanderingTrader" => WanderingTrader::class,
 
             //default
             default => null,
