@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace dungeonlands\mobs\entity\hostile;
+namespace dungeonlands\mobs\entity\passive;
 
 use dungeonlands\mobs\entity\AbstractMob;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
@@ -10,22 +10,17 @@ use pocketmine\item\VanillaItems;
 use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
 use pocketmine\player\Player;
 
-class Blaze extends AbstractMob
+class Pig extends AbstractMob
 {
-    protected static string $_typeID = EntityIds::BLAZE;
-    protected string $_name = "Blaze";
+    protected static string $_typeID = EntityIds::PIG;
+    protected string $_name = "PIG";
 
-    protected int $_health = 20;
+    protected int $_health = 10;
 
-    protected float $_speed = 0.23;
+    protected float $_sizeHeight = 0.9;
+    protected float $_sizeWidth = 0.9;
 
-    protected bool $_canClimb = false;
-    protected bool $_hasGravity = false;
-
-    protected float $_sizeHeight = 1.8;
-    protected float $_sizeWidth = 0.5;
-
-    protected int $_xp = 10;
+    protected int $_xp = 2;
 
     public function getDrops(): array
     {
@@ -33,7 +28,10 @@ class Blaze extends AbstractMob
         if ($cause instanceof EntityDamageByEntityEvent) {
             $damager = $cause->getDamager();
             if ($damager instanceof Player) {
-                return [VanillaItems::BLAZE_ROD()->setCount(mt_rand(0, 1))];
+                if ($this->isOnFire()) {
+                    return [VanillaItems::COOKED_PORKCHOP()->setCount(mt_rand(1, 3))];
+                }
+                return [VanillaItems::RAW_PORKCHOP()->setCount(mt_rand(1, 3))];
             }
         }
         return [];

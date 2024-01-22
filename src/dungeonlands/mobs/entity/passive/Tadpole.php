@@ -7,14 +7,13 @@ namespace dungeonlands\mobs\entity\passive;
 use dungeonlands\mobs\entity\AbstractMob;
 use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
 
-class Allay extends AbstractMob
+class Tadpole extends AbstractMob
 {
-    protected static string $_typeID = EntityIds::ALLAY;
-    protected string $_name = "Allay";
+    protected static string $_typeID = EntityIds::TADPOLE;
+    protected string $_name = "TADPOLE";
 
+    protected int $_health = 6;
 
     protected float $_sizeHeight = 0.6;
-    protected float $_sizeWidth = 0.6;
-
-    protected int $_xp = 0;
+    protected float $_sizeWidth = 0.8;
 }

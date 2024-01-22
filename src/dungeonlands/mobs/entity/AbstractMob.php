@@ -77,16 +77,16 @@ abstract class AbstractMob extends Living
 
     private function _tick(): void
     {
-        if (!mt_rand(1, 5) === 3){
+        if (!mt_rand(1, 5) === 3) {
             return;
         }
 
         $pos = $this->_destination;
-        if ($pos->x === 0 and $pos->y === 0 and $pos->z === 0){
+        if ($pos->x === 0 and $pos->y === 0 and $pos->z === 0) {
             $this->_destination = $this->_getRandomDestination();
         }
 
-        if (mt_rand(1, 3) !== 2){
+        if (mt_rand(1, 3) !== 2) {
             return;
         }
 
@@ -100,10 +100,10 @@ abstract class AbstractMob extends Living
         $swimming = $this->isSwimming();
         $flying = !$this->isOnGround();
 
-        if (!$flying and $motion->y < 0 and !$swimming){
+        if (!$flying and $motion->y < 0 and !$swimming) {
             $motion->y *= 0.6;
-        }else{
-            if (mt_rand(0, 100) === 50 or $this->isCollided and $swimming){
+        } else {
+            if (mt_rand(0, 100) === 50 or $this->isCollided and $swimming) {
                 $this->_destination = $this->_getRandomDestination();
             }
             $targetPos = $this->calculateMotion();
@@ -112,11 +112,11 @@ abstract class AbstractMob extends Living
             $motion->z = $targetPos->z;
         }
 
-        if (mt_rand(1, 3) !== 2){
+        if (mt_rand(1, 3) !== 2) {
             return;
         }
 
-        if ($this->isCollidedHorizontally and !$swimming){
+        if ($this->isCollidedHorizontally and !$swimming) {
             $motion->y = 1;
         }
 
@@ -133,17 +133,17 @@ abstract class AbstractMob extends Living
     {
         $location = $this->getLocation();
 
-        if ($this->lastUpdate % 100 === 0){
-            if ($this->getHealth() < $this->getMaxHealth()){
+        if ($this->lastUpdate % 100 === 0) {
+            if ($this->getHealth() < $this->getMaxHealth()) {
                 $this->setHealth($this->getHealth() + 2);
             }
         }
 
         #add fire to nightlyentitys
 
-        if (mt_rand(1, 100) === 50){
+        if (mt_rand(1, 100) === 50) {
             $this->lookAt($this->_defaultLook);
-        }elseif(mt_rand(1, 100) === 50){
+        } elseif (mt_rand(1, 100) === 50) {
             $x = $location->x + mt_rand(-1, 1);
             $y = $location->y + mt_rand(-1, 1);
             $z = $location->z + mt_rand(-1, 1);
@@ -168,7 +168,7 @@ abstract class AbstractMob extends Living
         $motion->y = 0;
         $motion->z = $speed * 0.15 * ($z / $diff);
 
-        if ($this->isSwimming()){
+        if ($this->isSwimming()) {
             $motion->y = $speed * 0.15 * ($y / $diff);
         }
 

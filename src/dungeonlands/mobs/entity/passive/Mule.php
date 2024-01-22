@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace dungeonlands\mobs\entity\hostile;
+namespace dungeonlands\mobs\entity\passive;
 
 use dungeonlands\mobs\entity\AbstractMob;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
@@ -10,22 +10,17 @@ use pocketmine\item\VanillaItems;
 use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
 use pocketmine\player\Player;
 
-class Blaze extends AbstractMob
+class Mule extends AbstractMob
 {
-    protected static string $_typeID = EntityIds::BLAZE;
-    protected string $_name = "Blaze";
+    protected static string $_typeID = EntityIds::MULE;
+    protected string $_name = "MULE";
 
-    protected int $_health = 20;
+    protected int $_health = 22;
 
-    protected float $_speed = 0.23;
+    protected float $_sizeHeight = 1.6;
+    protected float $_sizeWidth = 1.4;
 
-    protected bool $_canClimb = false;
-    protected bool $_hasGravity = false;
-
-    protected float $_sizeHeight = 1.8;
-    protected float $_sizeWidth = 0.5;
-
-    protected int $_xp = 10;
+    protected int $_xp = 2;
 
     public function getDrops(): array
     {
@@ -33,7 +28,7 @@ class Blaze extends AbstractMob
         if ($cause instanceof EntityDamageByEntityEvent) {
             $damager = $cause->getDamager();
             if ($damager instanceof Player) {
-                return [VanillaItems::BLAZE_ROD()->setCount(mt_rand(0, 1))];
+                return [VanillaItems::LEATHER()->setCount(mt_rand(0, 2))];
             }
         }
         return [];
