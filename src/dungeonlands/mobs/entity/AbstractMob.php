@@ -19,7 +19,7 @@ abstract class AbstractMob extends Living
     protected float $_speed = 0.1;
 
     protected bool $_canClimb = false;
-    protected bool $_hasGravity = false;
+    protected bool $_hasGravity = true;
 
     protected float $_sizeHeight = 2.5;
     protected float $_sizeWidth = 1.0;
@@ -98,7 +98,7 @@ abstract class AbstractMob extends Living
         $motion = $this->getMotion();
         $location = $this->getLocation();
         $swimming = $this->isSwimming();
-        $flying = !$this->isOnGround();
+        $flying = $this->isOnGround();
 
         if (!$flying and $motion->y < 0 and !$swimming) {
             $motion->y *= 0.6;
