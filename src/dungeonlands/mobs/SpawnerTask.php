@@ -18,6 +18,8 @@ class SpawnerTask extends Task
 
     public function onRun(): void
     {
+        $this->clearAllMobs();
+
         $this->manager->despawnMobs();
         $this->clearXpOrbs();
         $this->manager->spawnMobs();
@@ -43,6 +45,15 @@ class SpawnerTask extends Task
                     $entity->flagForDespawn();
                 }
             }
+        }
+    }
+
+    private function clearAllMobs(): void
+    {
+        $server = $this->plugin->getServer();
+
+        if ($server->getTicksPerSecond() < 20) {
+            $this->manager->despawnAllMobs();
         }
     }
 }

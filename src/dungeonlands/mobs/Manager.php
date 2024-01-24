@@ -130,6 +130,27 @@ class Manager
         }
     }
 
+    public function despawnAllMobs(): void
+    {
+        $worldManager = $this->plugin->getServer()->getWorldManager();
+
+        foreach ($this->plugin::WORLDS as $mobType => $worldName) {
+            $world = $worldManager->getWorldByName($worldName);
+
+            if ($world === null) {
+                return;
+            }
+
+            foreach ($world->getEntities() as $entity) {
+                if (!$entity instanceof AbstractMob) {
+                    return;
+                }
+
+                $entity->flagForDespawn();
+            }
+        }
+    }
+
     public function spawn(string $mobName, Position $position): void
     {
         $entityClass = $this->getClassFor($mobName);
