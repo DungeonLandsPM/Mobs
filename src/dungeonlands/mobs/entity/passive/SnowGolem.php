@@ -13,9 +13,10 @@ use pocketmine\player\Player;
 class SnowGolem extends AbstractMob
 {
     protected static string $_typeID = EntityIds::SNOW_GOLEM;
-    protected string $_name = "SNOW_GOLEM";
 
     protected int $_health = 4;
+
+    protected float $_speed = 0.2;
 
     protected float $_sizeHeight = 1.8;
     protected float $_sizeWidth = 0.4;
@@ -26,7 +27,7 @@ class SnowGolem extends AbstractMob
         if ($cause instanceof EntityDamageByEntityEvent) {
             $damager = $cause->getDamager();
             if ($damager instanceof Player) {
-                return [VanillaItems::RAW_MUTTON()->setCount(mt_rand(0, 15))];
+                return [VanillaItems::SNOWBALL()->setCount(mt_rand(0, 15))];
             }
         }
         return [];

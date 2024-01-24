@@ -13,9 +13,10 @@ use pocketmine\player\Player;
 class Squid extends AbstractMob
 {
     protected static string $_typeID = EntityIds::SQUID;
-    protected string $_name = "SQUID";
 
     protected int $_health = 10;
+
+    protected float $_speed = 0.7;
 
     protected float $_sizeHeight = 0.95;
     protected float $_sizeWidth = 0.95;

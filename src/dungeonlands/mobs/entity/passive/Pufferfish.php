@@ -13,14 +13,13 @@ use pocketmine\player\Player;
 class Pufferfish extends AbstractMob
 {
     protected static string $_typeID = EntityIds::PUFFERFISH;
-    protected string $_name = "PUFFERFISH";
 
     protected int $_health = 3;
 
+    protected float $_speed = 0.7;
+
     protected float $_sizeHeight = 0.96;
     protected float $_sizeWidth = 0.96;
-
-    protected int $_xp = 2;
 
     public function getDrops(): array
     {
@@ -28,9 +27,14 @@ class Pufferfish extends AbstractMob
         if ($cause instanceof EntityDamageByEntityEvent) {
             $damager = $cause->getDamager();
             if ($damager instanceof Player) {
-                return [VanillaItems::PUFFERFISH(), VanillaItems::BONE()->setCount(mt_rand(1, 2))];
+                return [VanillaItems::PUFFERFISH(), VanillaItems::BONE()->setCount(mt_rand(0, 2))];
             }
         }
         return [];
+    }
+
+    public function getXpDropAmount(): int
+    {
+        return mt_rand(1, 3);
     }
 }

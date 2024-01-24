@@ -15,9 +15,10 @@ use pocketmine\player\Player;
 class Sheep extends AbstractMob
 {
     protected static string $_typeID = EntityIds::SHEEP;
-    protected string $_name = "SHEEP";
 
     protected int $_health = 8;
+
+    protected float $_speed = 0.23;
 
     protected float $_sizeHeight = 1.3;
     protected float $_sizeWidth = 0.9;

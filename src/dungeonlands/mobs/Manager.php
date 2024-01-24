@@ -42,7 +42,6 @@ use pocketmine\block\BlockTypeIds;
 use pocketmine\data\bedrock\BiomeIds;
 use pocketmine\entity\Location;
 use pocketmine\world\Position;
-use pocketmine\world\World;
 
 class Manager
 {
@@ -50,60 +49,58 @@ class Manager
     {
     }
 
-    private const SPAWN_AMOUNT = 10;
+    private const SPAWN_AMOUNT_PER_PLAYER = 15;
 
     public function spawnMobs(): void
     {
         $worldManager = $this->plugin->getServer()->getWorldManager();
 
-        foreach ($this->plugin::WORLDS as $mobType => $world) {
-            $worldInstance = $worldManager->getWorldByName($world);
+        foreach ($this->plugin::WORLDS as $mobType => $worldName) {
+            $world = $worldManager->getWorldByName($worldName);
 
-            if ($worldInstance === null) {
-                return;
-            }
-
-            $worldPlayers = $worldInstance->getPlayers();
-            if (count($worldPlayers) === 0) {
+            if ($world === null) {
                 return;
             }
 
             $positions = [];
-            foreach ($worldPlayers as $worldPlayer) {
-                $pos = $this->findSafeSpawn($worldPlayer->getPosition(), $worldInstance);
-                if ($pos !== null) {
-                    $positions[] = $pos;
+            foreach ($world->getPlayers() as $worldPlayer) {
+                for ($i = 0; $i < self::SPAWN_AMOUNT_PER_PLAYER; $i++) {
+                    $pos = $this->findSafeSpawn($worldPlayer->getPosition());
+                    if ($pos !== null) {
+                        $positions[] = $pos;
+                    }
                 }
             }
 
             foreach ($positions as $position) {
-                $biomeID = $worldInstance->getBiomeId($pos->getFloorX(), $pos->getFloorY(), $pos->getFloorZ());
-                $isNight = $worldInstance->getTime() < 13000;
-                $mobTable = $this->getMobsForBiome($worldInstance->getFolderName(), $biomeID, $isNight);
+                $mobTable = $this->getMobsForBiome($world->getFolderName(), $world->getBiomeId($position->getFloorX(), $position->getFloorY(), $position->getFloorZ()), $world->getTime() < 13000);
 
-                foreach ($mobTable as $mobName) {
-                    $this->spawn($mobName, $position);
-                }
+                $this->spawn($mobTable[array_rand($mobTable)], $position);
             }
         }
     }
 
+    private const ATTEMPTS = 50;
     private const RADIUS = 100;
+    private const Y_DIFFERENCE = 3;
 
-    private function findSafeSpawn(Position $position, World $world): ?Position
+    private function findSafeSpawn(Position $startPos): ?Position
     {
-        for ($x = -self::RADIUS; $x <= self::RADIUS; $x++) {
-            for ($y = -self::RADIUS; $y <= self::RADIUS; $y++) {
-                for ($z = -self::RADIUS; $z <= self::RADIUS; $z++) {
-                    $block = $world->getBlock($position->add($x, 0, $z));
-                    if ($block->isSolid()) {
-                        $blockAbove = $world->getBlock($position->add($x, 1, $z));
-                        $blockAbove2 = $world->getBlock($position->add($x, 2, $z));
-                        if ($blockAbove->getTypeId() !== BlockTypeIds::AIR && $blockAbove2->getTypeId() !== BlockTypeIds::AIR) {
-                            return $position;
-                        }
-                    }
-                }
+        $world = $startPos->getWorld();
+
+        for ($i = 0; $i < self::ATTEMPTS; $i++) {
+            $randomX = (int)($startPos->x + mt_rand(-self::RADIUS, self::RADIUS));
+            $randomY = (int)($startPos->y + mt_rand(-self::Y_DIFFERENCE, self::Y_DIFFERENCE));
+            $randomZ = (int)($startPos->z + mt_rand(-self::RADIUS, self::RADIUS));
+
+            //BLOCK UNDER MOB
+            $under = $world->getBlockAt($randomX, $randomY - 1, $randomZ);
+            //BLOCK ABOVE MOB
+            $above1 = $world->getBlockAt($randomX, $randomY, $randomZ)->getTypeId();
+            $above2 = $world->getBlockAt($randomX, $randomY + 1, $randomZ)->getTypeId();
+
+            if ($under->isSolid() and $above1 === BlockTypeIds::AIR and $above2 === BlockTypeIds::AIR) {
+                return new Position($randomX, $randomY, $randomZ, $world);
             }
         }
         return null;
@@ -113,31 +110,21 @@ class Manager
     {
         $worldManager = $this->plugin->getServer()->getWorldManager();
 
-        foreach ($this->plugin::WORLDS as $mobType => $world) {
-            $worldInstance = $worldManager->getWorldByName($world);
+        foreach ($this->plugin::WORLDS as $mobType => $worldName) {
+            $world = $worldManager->getWorldByName($worldName);
 
-            if ($worldInstance !== null) {
-                foreach ($worldInstance->getEntities() as $entity) {
-                    if (!$entity instanceof AbstractMob) {
-                        continue;
-                    }
+            if ($world === null) {
+                return;
+            }
 
-                    if (count($worldInstance->getPlayers()) < 1) {
-                        $entity->kill();
-                        continue;
-                    }
+            foreach ($world->getEntities() as $entity) {
+                if (!$entity instanceof AbstractMob) {
+                    return;
+                }
 
-                    $near = false;
-                    foreach ($worldInstance->getPlayers() as $player) {
-                        if (count($player->getWorld()->getNearbyEntities($player->getBoundingBox()->expandedCopy(100, 100, 100), $entity)) > 0) {
-                            $near = true;
-                            break;
-                        }
-                    }
-
-                    if (!$near) {
-                        $entity->kill();
-                    }
+                if (count($world->getPlayers()) === 0) {
+                    $entity->kill();
+                    return;
                 }
             }
         }

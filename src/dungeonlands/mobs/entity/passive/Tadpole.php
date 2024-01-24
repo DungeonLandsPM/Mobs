@@ -10,7 +10,6 @@ use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
 class Tadpole extends AbstractMob
 {
     protected static string $_typeID = EntityIds::TADPOLE;
-    protected string $_name = "TADPOLE";
 
     protected int $_health = 6;
 

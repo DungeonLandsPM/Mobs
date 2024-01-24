@@ -14,9 +14,10 @@ use pocketmine\player\Player;
 class Turtle extends AbstractMob
 {
     protected static string $_typeID = EntityIds::TURTLE;
-    protected string $_name = "TURTLE";
 
     protected int $_health = 30;
+
+    protected float $_speed = 0.25;
 
     protected float $_sizeHeight = 0.4;
     protected float $_sizeWidth = 1.2;
@@ -27,7 +28,7 @@ class Turtle extends AbstractMob
         if ($cause instanceof EntityDamageByEntityEvent) {
             $damager = $cause->getDamager();
             if ($damager instanceof Player) {
-                return [VanillaBlocks::SEA_LANTERN()->asItem()->setCount(mt_rand(0, 2)), VanillaItems::BONE()->setCount(1)];
+                return [VanillaBlocks::SEA_LANTERN()->asItem()->setCount(mt_rand(0, 2)), VanillaItems::BOWL()];
             }
         }
         return [];

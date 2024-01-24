@@ -13,9 +13,10 @@ use pocketmine\player\Player;
 class TropicalFish extends AbstractMob
 {
     protected static string $_typeID = EntityIds::TROPICALFISH;
-    protected string $_name = "TROPICALFISH";
 
     protected int $_health = 3;
+
+    protected float $_speed = 0.7;
 
     protected float $_sizeHeight = 0.52;
     protected float $_sizeWidth = 0.52;
@@ -26,7 +27,7 @@ class TropicalFish extends AbstractMob
         if ($cause instanceof EntityDamageByEntityEvent) {
             $damager = $cause->getDamager();
             if ($damager instanceof Player) {
-                return [VanillaItems::CLOWNFISH(), VanillaItems::BONE()->setCount(mt_rand(1, 2))];
+                return [VanillaItems::CLOWNFISH(), VanillaItems::BONE()->setCount(mt_rand(0, 2))];
             }
         }
         return [];

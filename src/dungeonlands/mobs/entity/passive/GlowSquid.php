@@ -13,14 +13,11 @@ use pocketmine\player\Player;
 class GlowSquid extends AbstractMob
 {
     protected static string $_typeID = EntityIds::GLOW_SQUID;
-    protected string $_name = "GLOW_SQUID";
 
     protected int $_health = 10;
 
     protected float $_sizeHeight = 0.95;
     protected float $_sizeWidth = 0.95;
-
-    protected int $_xp = 2;
 
     public function getDrops(): array
     {
@@ -32,5 +29,10 @@ class GlowSquid extends AbstractMob
             }
         }
         return [];
+    }
+
+    public function getXpDropAmount(): int
+    {
+        return mt_rand(1, 3);
     }
 }

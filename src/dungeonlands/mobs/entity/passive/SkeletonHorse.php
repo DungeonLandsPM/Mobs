@@ -13,9 +13,10 @@ use pocketmine\player\Player;
 class SkeletonHorse extends AbstractMob
 {
     protected static string $_typeID = EntityIds::SKELETON_HORSE;
-    protected string $_name = "SKELETON_HORSE";
 
     protected int $_health = 15;
+
+    protected float $_speed = 0.2;
 
     protected float $_sizeHeight = 1.6;
     protected float $_sizeWidth = 1.4;

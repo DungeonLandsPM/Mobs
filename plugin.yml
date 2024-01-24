@@ -3,3 +3,7 @@ version: 1.0.0
 
 main: dungeonlands\mobs\MobsLoader
 api: 5.0.0
+
+authors:
+  - DungeonLands
+  - tgwaste (some parts of the code)

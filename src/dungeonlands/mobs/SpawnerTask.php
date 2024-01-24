@@ -19,11 +19,7 @@ class SpawnerTask extends Task
     public function onRun(): void
     {
         $this->manager->despawnMobs();
-
-        if (mt_rand(1, 3) === 2) {
-            $this->clearXpOrbs();
-        }
-
+        $this->clearXpOrbs();
         $this->manager->spawnMobs();
     }
 
@@ -32,15 +28,19 @@ class SpawnerTask extends Task
         $worldManager = $this->plugin->getServer()->getWorldManager();
 
         foreach ($this->plugin::WORLDS as $mobType => $worldName) {
-            $worldInstance = $worldManager->getWorldByName($worldName);
-            if ($worldInstance !== null) {
-                if ($worldInstance->isLoaded()) {
-                    $entities = $worldInstance->getEntities();
-                    foreach ($entities as $entity) {
-                        if ($entity instanceof ExperienceOrb) {
-                            $entity->flagForDespawn();
-                        }
-                    }
+            $world = $worldManager->getWorldByName($worldName);
+
+            if ($world === null) {
+                return;
+            }
+
+            if (!$world->isLoaded()) {
+                return;
+            }
+
+            foreach ($world->getEntities() as $entity) {
+                if ($entity instanceof ExperienceOrb) {
+                    $entity->flagForDespawn();
                 }
             }
         }

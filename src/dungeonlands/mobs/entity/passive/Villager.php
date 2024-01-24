@@ -10,8 +10,8 @@ use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
 class Villager extends AbstractMob
 {
     protected static string $_typeID = EntityIds::VILLAGER;
-    protected string $_name = "VILLAGER";
 
+    protected float $_speed = 0.5;
 
     protected float $_sizeHeight = 1.9;
     protected float $_sizeWidth = 0.6;

@@ -12,7 +12,6 @@ use pocketmine\nbt\tag\CompoundTag;
 abstract class AbstractMob extends Living
 {
     protected static string $_typeID = "minecraft:player";
-    protected string $_name = "player";
 
     protected int $_health = 20;
 
@@ -23,8 +22,6 @@ abstract class AbstractMob extends Living
 
     protected float $_sizeHeight = 2.5;
     protected float $_sizeWidth = 1.0;
-
-    protected int $_xp = 0;
 
     protected function initEntity(CompoundTag $nbt): void
     {
@@ -53,11 +50,6 @@ abstract class AbstractMob extends Living
     public function getName(): string
     {
         return $this->_name;
-    }
-
-    public function getXpDropAmount(): int
-    {
-        return $this->_xp;
     }
 
     protected function getInitialSizeInfo(): EntitySizeInfo

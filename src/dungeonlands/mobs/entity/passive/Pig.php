@@ -13,14 +13,13 @@ use pocketmine\player\Player;
 class Pig extends AbstractMob
 {
     protected static string $_typeID = EntityIds::PIG;
-    protected string $_name = "PIG";
 
     protected int $_health = 10;
 
+    protected float $_speed = 0.25;
+
     protected float $_sizeHeight = 0.9;
     protected float $_sizeWidth = 0.9;
-
-    protected int $_xp = 2;
 
     public function getDrops(): array
     {
@@ -35,5 +34,10 @@ class Pig extends AbstractMob
             }
         }
         return [];
+    }
+
+    public function getXpDropAmount(): int
+    {
+        return mt_rand(1, 3);
     }
 }

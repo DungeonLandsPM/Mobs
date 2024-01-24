@@ -10,7 +10,6 @@ use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
 class Sniffer extends AbstractMob
 {
     protected static string $_typeID = EntityIds::SNIFFER;
-    protected string $_name = "SNIFFER";
 
     protected int $_health = 14;
 

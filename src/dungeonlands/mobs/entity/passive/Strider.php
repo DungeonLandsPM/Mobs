@@ -13,8 +13,8 @@ use pocketmine\player\Player;
 class Strider extends AbstractMob
 {
     protected static string $_typeID = EntityIds::STRIDER;
-    protected string $_name = "STRIDER";
 
+    protected float $_speed = 0.175;
 
     protected float $_sizeHeight = 1.7;
     protected float $_sizeWidth = 0.9;
