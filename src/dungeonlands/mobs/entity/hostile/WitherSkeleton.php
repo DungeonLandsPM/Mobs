@@ -10,9 +10,9 @@ use pocketmine\item\VanillaItems;
 use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
 use pocketmine\player\Player;
 
-class Blaze extends AbstractMob
+class WitherSkeleton extends AbstractMob
 {
-    protected static string $_typeID = EntityIds::BLAZE;
+    protected static string $_typeID = EntityIds::WITHER_SKELETON;
 
     protected int $_health = 20;
 

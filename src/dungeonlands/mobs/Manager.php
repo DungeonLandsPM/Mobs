@@ -6,6 +6,32 @@ namespace dungeonlands\mobs;
 
 use dungeonlands\mobs\entity\AbstractMob;
 use dungeonlands\mobs\entity\hostile\Blaze;
+use dungeonlands\mobs\entity\hostile\Creeper;
+use dungeonlands\mobs\entity\hostile\ElderGuardian;
+use dungeonlands\mobs\entity\hostile\Endermite;
+use dungeonlands\mobs\entity\hostile\Evoker;
+use dungeonlands\mobs\entity\hostile\Ghast;
+use dungeonlands\mobs\entity\hostile\Guardian;
+use dungeonlands\mobs\entity\hostile\Hoglin;
+use dungeonlands\mobs\entity\hostile\Husk;
+use dungeonlands\mobs\entity\hostile\MagmaCube;
+use dungeonlands\mobs\entity\hostile\Phantom;
+use dungeonlands\mobs\entity\hostile\PiglinBrute;
+use dungeonlands\mobs\entity\hostile\Pillager;
+use dungeonlands\mobs\entity\hostile\Ravager;
+use dungeonlands\mobs\entity\hostile\Shulker;
+use dungeonlands\mobs\entity\hostile\Silverfish;
+use dungeonlands\mobs\entity\hostile\Skeleton;
+use dungeonlands\mobs\entity\hostile\Slime;
+use dungeonlands\mobs\entity\hostile\Stray;
+use dungeonlands\mobs\entity\hostile\Vex;
+use dungeonlands\mobs\entity\hostile\Vindicator;
+use dungeonlands\mobs\entity\hostile\Warden;
+use dungeonlands\mobs\entity\hostile\Witch;
+use dungeonlands\mobs\entity\hostile\WitherSkeleton;
+use dungeonlands\mobs\entity\hostile\Zoglin;
+use dungeonlands\mobs\entity\hostile\Zombie;
+use dungeonlands\mobs\entity\hostile\ZombieVillager;
 use dungeonlands\mobs\entity\neutral\Bee;
 use dungeonlands\mobs\entity\neutral\CaveSpider;
 use dungeonlands\mobs\entity\neutral\Dolphin;
@@ -198,6 +224,9 @@ class Manager
     private function getMobsBiome(): array
     {
         $nonBiomeOverworld = [
+            #HOSTILE
+            "Evoker", "Pillager", "Ravager", "Vex", "Silverfish",
+
             #PASSIVE
             "Allay", "Axolotl", "Bat", "Cat", "Mule", "Sniffer", "Villager", "WanderingTrader",
 
@@ -211,6 +240,9 @@ class Manager
         ];
 
         $nonWaterBiomeOverworld = [
+            #HOSTILE
+            "ElderGuardian", "Guardian",
+
             #PASSIVE
             "Tadpole",
         ];
@@ -221,6 +253,9 @@ class Manager
         ];
 
         $nonBiomeNether = [
+            #HOSTILE
+            "Blaze", "PiglinBrute", "WitherSkeleton",
+
             #PASSIVE
             "Blaze"
         ];
@@ -239,8 +274,8 @@ class Manager
             BiomeIds::PLAINS => [...$nonBiomeOverworld, ...$everyBiomeOverworld, "Donkey", "Horse"],
             BiomeIds::SUNFLOWER_PLAINS => [...$everyBiomeOverworld, "Donkey", "Horse"],
 
-            BiomeIds::ICE_PLAINS => ["Rabbit", "PolarBear"],
-            BiomeIds::ICE_PLAINS_SPIKES => ["Rabbit", "PolarBear"],
+            BiomeIds::ICE_PLAINS => ["Rabbit", "PolarBear", "Stray"],
+            BiomeIds::ICE_PLAINS_SPIKES => ["Rabbit", "PolarBear", "Stray"],
 
             #TAIGA
             BiomeIds::TAIGA => ["Rabbit", "Wolf"],
@@ -262,7 +297,7 @@ class Manager
             BiomeIds::MUSHROOM_ISLAND => ["Mooshroom"],
 
             #Desert
-            BiomeIds::DESERT => ["Camel", "Rabbit"],
+            BiomeIds::DESERT => ["Camel", "Rabbit", "Husk"],
 
             #OCEAN
             BiomeIds::OCEAN => ["Cod", "Dolphin", "Drowned", ...$everyWaterBiomeOverworld],
@@ -276,12 +311,13 @@ class Manager
             BiomeIds::COLD_OCEAN => ["Cod", "Salmon", "Drowned"],
             BiomeIds::DEEP_COLD_OCEAN => ["Cod", "Salmon", "Drowned"],
 
-            BiomeIds::FROZEN_OCEAN => ["Rabbit", "Salmon", "Drowned", "PolarBear"],
-            BiomeIds::DEEP_FROZEN_OCEAN => ["Salmon", "Drowned", "PolarBear"],
+            BiomeIds::FROZEN_OCEAN => ["Rabbit", "Salmon", "Drowned", "PolarBear", "Stray"],
+            BiomeIds::DEEP_FROZEN_OCEAN => ["Salmon", "Drowned", "PolarBear", "Stray"],
+            BiomeIds::LEGACY_FROZEN_OCEAN => ["Stray"],
 
             #RIVER
             BiomeIds::RIVER => ["Salmon", "Drowned", ...$nonWaterBiomeOverworld, ...$everyWaterBiomeOverworld],
-            BiomeIds::FROZEN_RIVER => ["Rabbit", "Salmon", "Drowned", "PolarBear"],
+            BiomeIds::FROZEN_RIVER => ["Rabbit", "Salmon", "Drowned", "PolarBear", "Stray"],
 
             #BEACH
             BiomeIds::BEACH => ["Turtle"],
@@ -293,18 +329,19 @@ class Manager
             ##NETHER
             BiomeIds::HELL => [...$nonBiomeNether, ...$everyBiomeNether],
 
-            BiomeIds::SOULSAND_VALLEY => ["Enderman"],
+            BiomeIds::SOULSAND_VALLEY => ["Enderman", "Ghast", "Skeleton"],
             BiomeIds::WARPED_FOREST => ["Enderman"],
-            BiomeIds::CRIMSON_FOREST => ["Piglin", "ZombifiedPiglin"],
+            BiomeIds::CRIMSON_FOREST => ["Piglin", "ZombifiedPiglin", "Hoglin"],
+            BiomeIds::BASALT_DELTAS => ["Ghast", "MagmaCube"],
 
             ##THE_END
-            BiomeIds::THE_END => ["Enderman"],
+            BiomeIds::THE_END => ["Enderman", "Endermite", "Shulker"],
         ];
     }
 
     private function getNightlyMobs(): array
     {
-        return ["SkeletonHorse", "SnowGolem", "Spider", "CaveSpider"];
+        return ["SkeletonHorse", "SnowGolem", "Spider", "CaveSpider", "Creeper", "Phantom", "Skeleton", "Slime", "Warden", "Witch", "Zombie"];
     }
 
     private function getClassFor(string $name): ?string
@@ -312,6 +349,32 @@ class Manager
         return match ($name) {
             #HOSTILE
             "Blaze" => Blaze::class,
+            "Creeper" => Creeper::class,
+            "ElderGuardian" => ElderGuardian::class,
+            "Endermite" => Endermite::class,
+            "Evoker" => Evoker::class,
+            "Ghast" => Ghast::class,
+            "Guardian" => Guardian::class,
+            "Hoglin" => Hoglin::class,
+            "Husk" => Husk::class,
+            "MagmaCube" => MagmaCube::class,
+            "Phantom" => Phantom::class,
+            "PiglinBrute" => PiglinBrute::class,
+            "Pillager" => Pillager::class,
+            "Ravager" => Ravager::class,
+            "Shulker" => Shulker::class,
+            "Silverfish" => Silverfish::class,
+            "Skeleton" => Skeleton::class,
+            "Slime" => Slime::class,
+            "Stray" => Stray::class,
+            "Vex" => Vex::class,
+            "Vindicator" => Vindicator::class,
+            "Warden" => Warden::class,
+            "Witch" => Witch::class,
+            "WitherSkeleton" => WitherSkeleton::class,
+            "Zoglin" => Zoglin::class,
+            "Zombie" => Zombie::class,
+            "ZombieVillager" => ZombieVillager::class,
 
             #NEUTRAL
             "Bee" => Bee::class,

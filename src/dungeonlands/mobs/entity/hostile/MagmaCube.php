@@ -10,16 +10,16 @@ use pocketmine\item\VanillaItems;
 use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
 use pocketmine\player\Player;
 
-class Blaze extends AbstractMob
+class MagmaCube extends AbstractMob
 {
-    protected static string $_typeID = EntityIds::BLAZE;
+    protected static string $_typeID = EntityIds::MAGMA_CUBE;
 
-    protected int $_health = 20;
+    protected int $_health = 16;
 
-    protected float $_speed = 0.23;
+    protected float $_speed = 0.4;
 
-    protected float $_sizeHeight = 1.8;
-    protected float $_sizeWidth = 0.5;
+    protected float $_sizeHeight = 2.08;
+    protected float $_sizeWidth = 2.08;
 
     public function getDrops(): array
     {
@@ -27,7 +27,7 @@ class Blaze extends AbstractMob
         if ($cause instanceof EntityDamageByEntityEvent) {
             $damager = $cause->getDamager();
             if ($damager instanceof Player) {
-                return [VanillaItems::BLAZE_ROD()->setCount(mt_rand(0, 1))];
+                return [VanillaItems::MAGMA_CREAM()->setCount(mt_rand(0, 1))];
             }
         }
         return [];
@@ -35,6 +35,6 @@ class Blaze extends AbstractMob
 
     public function getXpDropAmount(): int
     {
-        return 10;
+        return 4;
     }
 }

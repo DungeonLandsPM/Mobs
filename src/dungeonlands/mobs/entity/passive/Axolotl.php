@@ -17,5 +17,4 @@ class Axolotl extends AbstractMob
 
     protected float $_sizeHeight = 0.42;
     protected float $_sizeWidth = 0.75;
-
 }
