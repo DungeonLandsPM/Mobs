@@ -123,7 +123,7 @@ class Manager
                 }
 
                 if (count($world->getPlayers()) === 0) {
-                    $entity->kill();
+                    $entity->flagForDespawn();
                     return;
                 }
             }
