@@ -7,6 +7,21 @@ namespace dungeonlands\mobs;
 use dungeonlands\mobs\entity\AbstractMob;
 use dungeonlands\mobs\entity\hostile\Blaze;
 use dungeonlands\mobs\entity\neutral\Bee;
+use dungeonlands\mobs\entity\neutral\CaveSpider;
+use dungeonlands\mobs\entity\neutral\Dolphin;
+use dungeonlands\mobs\entity\neutral\Drowned;
+use dungeonlands\mobs\entity\neutral\Enderman;
+use dungeonlands\mobs\entity\neutral\Fox;
+use dungeonlands\mobs\entity\neutral\Goat;
+use dungeonlands\mobs\entity\neutral\IronGolem;
+use dungeonlands\mobs\entity\neutral\Llama;
+use dungeonlands\mobs\entity\neutral\Panda;
+use dungeonlands\mobs\entity\neutral\Piglin;
+use dungeonlands\mobs\entity\neutral\PolarBear;
+use dungeonlands\mobs\entity\neutral\Spider;
+use dungeonlands\mobs\entity\neutral\TraderLlama;
+use dungeonlands\mobs\entity\neutral\Wolf;
+use dungeonlands\mobs\entity\neutral\ZombiefiedPiglin;
 use dungeonlands\mobs\entity\passive\Allay;
 use dungeonlands\mobs\entity\passive\Axolotl;
 use dungeonlands\mobs\entity\passive\Bat;
@@ -187,7 +202,7 @@ class Manager
             "Allay", "Axolotl", "Bat", "Cat", "Mule", "Sniffer", "Villager", "WanderingTrader",
 
             #NEUTRAL
-            "Bee"
+            "Bee", "CaveSpider", "Enderman", "Goat", "IronGolem"
         ];
 
         $everyBiomeOverworld = [
@@ -213,6 +228,9 @@ class Manager
         $everyBiomeNether = [
             #PASSIVE
             "Strider",
+
+            #NEUTRAL
+            "Enderman"
         ];
 
         return [
@@ -221,23 +239,24 @@ class Manager
             BiomeIds::PLAINS => [...$nonBiomeOverworld, ...$everyBiomeOverworld, "Donkey", "Horse"],
             BiomeIds::SUNFLOWER_PLAINS => [...$everyBiomeOverworld, "Donkey", "Horse"],
 
-            BiomeIds::ICE_PLAINS => ["Rabbit"],
-            BiomeIds::ICE_PLAINS_SPIKES => ["Rabbit"],
-            BiomeIds::COLD_TAIGA => ["Rabbit"],
+            BiomeIds::ICE_PLAINS => ["Rabbit", "PolarBear"],
+            BiomeIds::ICE_PLAINS_SPIKES => ["Rabbit", "PolarBear"],
 
             #TAIGA
-            BiomeIds::TAIGA => ["Rabbit"],
+            BiomeIds::TAIGA => ["Rabbit", "Wolf"],
+            BiomeIds::COLD_TAIGA => ["Rabbit", "Fox"],
 
             #FOREST
+            BiomeIds::FOREST => ["Llama", "TraderLlama", "Wolf"],
             BiomeIds::FLOWER_FOREST => ["Rabbit"],
 
             #JUNGLE
-            BiomeIds::JUNGLE => ["Ocelot", "Parrot"],
-            BiomeIds::BAMBOO_JUNGLE => ["Ocelot", "Parrot"],
+            BiomeIds::JUNGLE => ["Ocelot", "Parrot", "Panda"],
+            BiomeIds::BAMBOO_JUNGLE => ["Ocelot", "Parrot", "Panda"],
 
             #SAVANNA
-            BiomeIds::SAVANNA => ["Donkey", "Horse"],
-            BiomeIds::SAVANNA_PLATEAU => ["Donkey", "Horse"],
+            BiomeIds::SAVANNA => ["Donkey", "Horse", "Llama", "TraderLlama"],
+            BiomeIds::SAVANNA_PLATEAU => ["Donkey", "Horse", "Llama", "TraderLlama"],
 
             #ISLAND
             BiomeIds::MUSHROOM_ISLAND => ["Mooshroom"],
@@ -246,23 +265,23 @@ class Manager
             BiomeIds::DESERT => ["Camel", "Rabbit"],
 
             #OCEAN
-            BiomeIds::OCEAN => ["Cod", ...$everyWaterBiomeOverworld],
-            BiomeIds::DEEP_OCEAN => ["Cod"],
+            BiomeIds::OCEAN => ["Cod", "Dolphin", "Drowned", ...$everyWaterBiomeOverworld],
+            BiomeIds::DEEP_OCEAN => ["Cod", "Dolphin", "Drowned"],
 
-            BiomeIds::WARM_OCEAN => ["Pufferfish", "TropicalFish"],
+            BiomeIds::WARM_OCEAN => ["Pufferfish", "TropicalFish", "Dolphin", "Drowned"],
 
-            BiomeIds::LUKEWARM_OCEAN => ["Cod", "Pufferfish", "TropicalFish"],
-            BiomeIds::DEEP_LUKEWARM_OCEAN => ["Cod", "Pufferfish", "TropicalFish"],
+            BiomeIds::LUKEWARM_OCEAN => ["Cod", "Pufferfish", "TropicalFish", "Dolphin", "Drowned"],
+            BiomeIds::DEEP_LUKEWARM_OCEAN => ["Cod", "Pufferfish", "TropicalFish", "Dolphin", "Drowned"],
 
-            BiomeIds::COLD_OCEAN => ["Cod", "Salmon"],
-            BiomeIds::DEEP_COLD_OCEAN => ["Cod", "Salmon"],
+            BiomeIds::COLD_OCEAN => ["Cod", "Salmon", "Drowned"],
+            BiomeIds::DEEP_COLD_OCEAN => ["Cod", "Salmon", "Drowned"],
 
-            BiomeIds::FROZEN_OCEAN => ["Rabbit", "Salmon"],
-            BiomeIds::DEEP_FROZEN_OCEAN => ["Salmon"],
+            BiomeIds::FROZEN_OCEAN => ["Rabbit", "Salmon", "Drowned", "PolarBear"],
+            BiomeIds::DEEP_FROZEN_OCEAN => ["Salmon", "Drowned", "PolarBear"],
 
             #RIVER
-            BiomeIds::RIVER => ["Salmon", ...$nonWaterBiomeOverworld, ...$everyWaterBiomeOverworld],
-            BiomeIds::FROZEN_RIVER => ["Rabbit", "Salmon"],
+            BiomeIds::RIVER => ["Salmon", "Drowned", ...$nonWaterBiomeOverworld, ...$everyWaterBiomeOverworld],
+            BiomeIds::FROZEN_RIVER => ["Rabbit", "Salmon", "Drowned", "PolarBear"],
 
             #BEACH
             BiomeIds::BEACH => ["Turtle"],
@@ -273,12 +292,19 @@ class Manager
 
             ##NETHER
             BiomeIds::HELL => [...$nonBiomeNether, ...$everyBiomeNether],
+
+            BiomeIds::SOULSAND_VALLEY => ["Enderman"],
+            BiomeIds::WARPED_FOREST => ["Enderman"],
+            BiomeIds::CRIMSON_FOREST => ["Piglin", "ZombifiedPiglin"],
+
+            ##THE_END
+            BiomeIds::THE_END => ["Enderman"],
         ];
     }
 
     private function getNightlyMobs(): array
     {
-        return ["SkeletonHorse", "SnowGolem"];
+        return ["SkeletonHorse", "SnowGolem", "Spider", "CaveSpider"];
     }
 
     private function getClassFor(string $name): ?string
@@ -289,6 +315,21 @@ class Manager
 
             #NEUTRAL
             "Bee" => Bee::class,
+            "CaveSpider" => CaveSpider::class,
+            "Dolphin" => Dolphin::class,
+            "Drowned" => Drowned::class,
+            "Enderman" => Enderman::class,
+            "Fox" => Fox::class,
+            "Goat" => Goat::class,
+            "IronGolem" => IronGolem::class,
+            "Llama" => Llama::class,
+            "Panda" => Panda::class,
+            "Piglin" => Piglin::class,
+            "PolarBear" => PolarBear::class,
+            "Spider" => Spider::class,
+            "TraderLlama" => TraderLlama::class,
+            "Wolf" => Wolf::class,
+            "ZombiefiedPiglin" => ZombiefiedPiglin::class,
 
             #PASSIVE
             "Allay" => Allay::class,

@@ -7,16 +7,16 @@ namespace dungeonlands\mobs\entity\neutral;
 use dungeonlands\mobs\entity\AbstractMob;
 use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
 
-class Bee extends AbstractMob
+class Fox extends AbstractMob
 {
-    protected static string $_typeID = EntityIds::BEE;
+    protected static string $_typeID = EntityIds::FOX;
 
-    protected int $_health = 10;
+    protected int $_health = 20;
 
     protected float $_speed = 0.3;
 
-    protected float $_sizeHeight = 0.5;
-    protected float $_sizeWidth = 0.55;
+    protected float $_sizeHeight = 0.7;
+    protected float $_sizeWidth = 0.6;
 
     public function getXpDropAmount(): int
     {

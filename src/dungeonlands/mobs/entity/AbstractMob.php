@@ -47,11 +47,6 @@ abstract class AbstractMob extends Living
         return static::$_typeID;
     }
 
-    public function getName(): string
-    {
-        return $this->_name;
-    }
-
     protected function getInitialSizeInfo(): EntitySizeInfo
     {
         return new EntitySizeInfo($this->_sizeHeight, $this->_sizeWidth);
