@@ -341,7 +341,7 @@ class Manager
 
     private function getNightlyMobs(): array
     {
-        return ["SkeletonHorse", "SnowGolem", "Spider", "CaveSpider", "Creeper", "Phantom", "Skeleton", "Slime", "Warden", "Witch", "Zombie"];
+        return ["SkeletonHorse", "SnowGolem", "Spider", "CaveSpider", "Creeper", "Phantom", "Skeleton", "Slime", "Warden", "Witch", "Zombie", "ZombieVillager"];
     }
 
     private function getClassFor(string $name): ?string

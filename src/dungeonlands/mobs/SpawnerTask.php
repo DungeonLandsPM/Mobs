@@ -19,20 +19,22 @@ class SpawnerTask extends Task
 
     public function onRun(): void
     {
-        $this->clearAll();
-
-        $this->manager->despawnMobs();
-        $this->manager->spawnMobs();
+        if (!$this->clearAll()) {
+            $this->manager->despawnMobs();
+            $this->manager->spawnMobs();
+        }
     }
 
-    private function clearAll(): void
+    private function clearAll(): bool
     {
         $server = $this->plugin->getServer();
 
         if ($server->getTicksPerSecond() < 20) {
             $this->manager->despawnAllMobs();
             $this->clearLag();
+            return true;
         }
+        return false;
     }
 
     private function clearLag(): void
