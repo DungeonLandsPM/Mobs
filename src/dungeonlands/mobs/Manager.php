@@ -159,13 +159,11 @@ class Manager
             }
 
             foreach ($world->getEntities() as $entity) {
-                if (!$entity instanceof AbstractMob) {
-                    return;
-                }
-
-                if (count($world->getPlayers()) === 0) {
-                    $entity->flagForDespawn();
-                    return;
+                if ($entity instanceof AbstractMob) {
+                    if (count($world->getPlayers()) === 0) {
+                        $entity->flagForDespawn();
+                        return;
+                    }
                 }
             }
         }
@@ -183,11 +181,9 @@ class Manager
             }
 
             foreach ($world->getEntities() as $entity) {
-                if (!$entity instanceof AbstractMob) {
-                    return;
+                if ($entity instanceof AbstractMob) {
+                    $entity->flagForDespawn();
                 }
-
-                $entity->flagForDespawn();
             }
         }
     }

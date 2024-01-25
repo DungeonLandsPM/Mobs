@@ -37,9 +37,6 @@ abstract class AbstractMob extends Living
         $this->setHasGravity($this->_hasGravity);
 
         $this->setCanSaveWithChunk(false);
-
-        $this->_defaultLook = new Vector3(0, 0, 0);
-        $this->_destination = new Vector3(0, 0, 0);
     }
 
     public static function getNetworkTypeId(): string
@@ -58,9 +55,6 @@ abstract class AbstractMob extends Living
     }
 
     //MORE
-    private Vector3 $_defaultLook;
-    private Vector3 $_destination;
-
     protected function entityBaseTick(int $tickDiff = 1): bool
     {
         $this->_tick();
@@ -69,92 +63,27 @@ abstract class AbstractMob extends Living
 
     private function _tick(): void
     {
-        if (mt_rand(1, 5) === 3) {
+        if (mt_rand(0, 10) !== 5) {
             return;
         }
 
-        $pos = $this->_destination;
-        if ($pos->x === 0 and $pos->y === 0 and $pos->z === 0) {
-            $this->_destination = $this->_getRandomDestination();
-        }
-
         $this->_move();
-        $this->_wait();
     }
 
     private function _move(): void
     {
-        $motion = $this->getMotion();
-        $location = $this->getLocation();
-        $swimming = $this->isSwimming();
-        $flying = $this->isOnGround();
-
-        if ($this->isCollided and $swimming) {
-            $this->_destination = $this->_getRandomDestination();
-        }
-
-        $targetPos = $this->calculateMotion();
-        $motion->x = $targetPos->x;
-        $motion->y = $targetPos->y;
-        $motion->z = $targetPos->z;
-
-        $vec = new Vector3($motion->x, $motion->y, $motion->z);
-        $look = $location->add($motion->x, $motion->y + $this->getEyeHeight(), $motion->z);
-
-        $this->_defaultLook = $look;
-        $this->lookAt($look);
-
-        $this->setMotion($vec);
-    }
-
-    private function _wait(): void
-    {
         $location = $this->getLocation();
 
-        if ($this->lastUpdate % 100 === 0) {
-            if ($this->getHealth() < $this->getMaxHealth()) {
-                $this->setHealth($this->getHealth() + 2);
-            }
+        if ($this->isInsideOfSolid()) {
+            $this->setMotion(new Vector3($location->x, $location->y + 3, $location->z));
+            return;
         }
 
-        #add fire to nightlyentitys
-
-        if (mt_rand(0, 100) === 50) {
-            $this->lookAt($this->_defaultLook);
-        } elseif (mt_rand(0, 100) === 50) {
+        if (mt_rand(0, 50) === 25) {
             $x = $location->x + mt_rand(-1, 1);
             $y = $location->y + mt_rand(-1, 1);
             $z = $location->z + mt_rand(-1, 1);
             $this->lookAt(new Vector3($x, $y, $z));
         }
-    }
-
-    private function calculateMotion(): Vector3
-    {
-        $destination = $this->_destination;
-        $pos = $this->getPosition();
-        $motion = $this->getMotion();
-        $speed = $this->_speed;
-
-        $x = $destination->x - $pos->x;
-        $y = $destination->y - $pos->y;
-        $z = $destination->z - $pos->z;
-
-        $diff = abs($x) + abs($z);
-
-        $motion->x = $speed * 0.15 * ($x / $diff);
-        $motion->y = 0;
-        $motion->z = $speed * 0.15 * ($z / $diff);
-
-        if ($this->isSwimming()) {
-            $motion->y = $speed * 0.15 * ($y / $diff);
-        }
-
-        return new Vector3($motion->x, $motion->y, $motion->z);
-    }
-
-    private function _getRandomDestination(): Vector3
-    {
-        return $this->getPosition()->add(mt_rand(1, 3), mt_rand(1, 3), mt_rand(1, 3));
     }
 }
