@@ -5,3 +5,6 @@ NO COMMANDS, NO PERMISSIONS - recommended for farmworlds
 
 ## How to spawn Mobs?
 Create a world called overworld, nether or the_end and it will spawn the right mobs!
+
+## TODO
+-[] Movement -> Currently I could not find a way for smooth movement
