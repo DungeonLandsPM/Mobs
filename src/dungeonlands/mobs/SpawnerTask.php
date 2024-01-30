@@ -12,6 +12,8 @@ use pocketmine\scheduler\Task;
 #[AllowDynamicProperties]
 class SpawnerTask extends Task
 {
+    private int $_clearTicker = 0;
+
     public function __construct(private MobsLoader $plugin)
     {
         $this->manager = new Manager($this->plugin);
@@ -19,22 +21,19 @@ class SpawnerTask extends Task
 
     public function onRun(): void
     {
-        if (!$this->clearAll()) {
-            $this->manager->despawnMobs();
-            $this->manager->spawnMobs();
+        $this->manager->despawnMobs();
+        $this->manager->spawnMobs();
+
+        if (++$this->_clearTicker === 100) {
+            $this->_clearTicker = 0;
+            $this->clearAll();
         }
     }
 
-    private function clearAll(): bool
+    private function clearAll(): void
     {
-        $server = $this->plugin->getServer();
-
-        if ($server->getTicksPerSecond() < 20) {
-            $this->manager->despawnAllMobs();
-            $this->clearLag();
-            return true;
-        }
-        return false;
+        $this->manager->despawnAllMobs();
+        $this->clearLag();
     }
 
     private function clearLag(): void

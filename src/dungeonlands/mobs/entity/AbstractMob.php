@@ -74,11 +74,6 @@ abstract class AbstractMob extends Living
     {
         $location = $this->getLocation();
 
-        if ($this->isInsideOfSolid()) {
-            $this->setMotion(new Vector3($location->x, $location->y + 3, $location->z));
-            return;
-        }
-
         if (mt_rand(0, 50) === 25) {
             $x = $location->x + mt_rand(-1, 1);
             $y = $location->y + mt_rand(-1, 1);
