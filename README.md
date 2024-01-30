@@ -7,4 +7,4 @@ NO COMMANDS, NO PERMISSIONS - recommended for farmworlds
 Create a world called overworld, nether or the_end and it will spawn the right mobs!
 
 ## TODO
--[] Movement -> Currently I could not find a way for smooth movement
+-[ ] Movement -> Currently I could not find a way for smooth movement
