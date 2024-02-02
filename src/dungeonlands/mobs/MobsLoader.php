@@ -33,6 +33,6 @@ class MobsLoader extends PluginBase
 
     private function registerTask(): void
     {
-        $this->getScheduler()->scheduleRepeatingTask(new SpawnerTask($this), 2500);
+        $this->getScheduler()->scheduleRepeatingTask(new SpawnerTask($this), 3500);
     }
 }
