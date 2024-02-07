@@ -6,12 +6,11 @@ namespace dungeonlands\mobs\entity;
 
 use pocketmine\entity\EntitySizeInfo;
 use pocketmine\entity\Living;
-use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 
 abstract class AbstractMob extends Living
 {
-    protected static string $_typeID = "minecraft:player";
+    protected static string $_typeID = "minecraft:npc";
 
     protected int $_health = 20;
 
@@ -22,6 +21,7 @@ abstract class AbstractMob extends Living
 
     protected float $_sizeHeight = 2.5;
     protected float $_sizeWidth = 1.0;
+    protected ?float $_eyeHeight = null;
 
     protected function initEntity(CompoundTag $nbt): void
     {
@@ -51,34 +51,6 @@ abstract class AbstractMob extends Living
 
     protected function getInitialSizeInfo(): EntitySizeInfo
     {
-        return new EntitySizeInfo($this->_sizeHeight, $this->_sizeWidth);
-    }
-
-    //MORE
-    protected function entityBaseTick(int $tickDiff = 1): bool
-    {
-        $this->_tick();
-        return parent::entityBaseTick($tickDiff);
-    }
-
-    private function _tick(): void
-    {
-        if (mt_rand(0, 10) !== 5) {
-            return;
-        }
-
-        $this->_move();
-    }
-
-    private function _move(): void
-    {
-        $location = $this->getLocation();
-
-        if (mt_rand(0, 50) === 25) {
-            $x = $location->x + mt_rand(-1, 1);
-            $y = $location->y + mt_rand(-1, 1);
-            $z = $location->z + mt_rand(-1, 1);
-            $this->lookAt(new Vector3($x, $y, $z));
-        }
+        return new EntitySizeInfo($this->_sizeHeight, $this->_sizeWidth, $this->_eyeHeight);
     }
 }
