@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace dungeonlands\mobs;
 
+use AllowDynamicProperties;
 use dungeonlands\mobs\entity\AbstractMob;
 use dungeonlands\mobs\entity\hostile\Blaze;
 use dungeonlands\mobs\entity\hostile\Creeper;
@@ -83,27 +84,33 @@ use pocketmine\block\BlockTypeIds;
 use pocketmine\data\bedrock\BiomeIds;
 use pocketmine\entity\Location;
 use pocketmine\world\Position;
+use pocketmine\world\World;
 
-class Manager{
-	public function __construct(private MobsLoader $plugin){
+#[AllowDynamicProperties] class Manager{
+	public function __construct(private readonly MobsLoader $plugin){
+		$this->worldManager = $this->plugin->getServer()->getWorldManager();
 	}
 
-	private const SPAWN_AMOUNT_PER_PLAYER = 10;
-
+	/**
+	 * ANIMALS SPAWNS UPON CHUNK GENERATION/LOADING, BUT THERE IS CURRENTLY NO WAY FOR THIS IN POCKETMINE
+	 * MONSTER SPAWNS IN A CERTAIN RADIUS AROUND THE PLAYER
+	 * MOBS CAN NOT SPAWN ON TRANSPARENT BLOCKS, IN WATER (EXPECT AQUATIC CREATURES), IN LAVA (EXPECT STRIDER), ON BEDROCK, ON LESS THAN A FULL BLOCK TALL (SUCH AS SLABS)
+	 */
 	public function spawnMobs() : void{
-		$worldManager = $this->plugin->getServer()->getWorldManager();
+		$amountPerPlayer = 5 * 2; //*2 for the attempts
 
-		foreach($this->plugin::WORLDS as $mobType => $worldName){
-			$world = $worldManager->getWorldByName($worldName);
+		foreach($this->plugin::WORLDS as $worldType => $worldName){
+			$world = $this->worldManager->getWorldByName($worldName);
 
 			if($world === null){
-				return;
+				break;
 			}
 
 			$positions = [];
-			foreach($world->getPlayers() as $worldPlayer){
-				for($i = 0; $i < self::SPAWN_AMOUNT_PER_PLAYER; $i++){
-					$pos = $this->findSafeSpawn($worldPlayer->getPosition());
+			foreach($world->getPlayers() as $player){
+				for($i = 0; $i < $amountPerPlayer; $i++){
+					$pos = $this->findSpawn($player->getPosition());
+
 					if($pos !== null){
 						$positions[] = $pos;
 					}
@@ -111,64 +118,75 @@ class Manager{
 			}
 
 			foreach($positions as $position){
-				$mobTable = $this->getMobsForBiome($world->getFolderName(), $world->getBiomeId($position->getFloorX(), $position->getFloorY(), $position->getFloorZ()), $world->getTime() < 13000);
+				if($position instanceof Position){
+					$mobTable = $this->getMobsForBiome($worldName, $world->getBiomeId($position->getFloorX(), $position->getFloorY(), $position->getFloorZ()), $this->isNight($world));
 
-				$this->spawn($mobTable[array_rand($mobTable)], $position);
-			}
-		}
-	}
+					$mob = $mobTable[array_rand($mobTable)];
 
-	private const ATTEMPTS = 50;
-	private const RADIUS = 100;
-	private const Y_DIFFERENCE = 3;
+					if($this->isAquatic($mob)){
+						if($this->isSafeForAquaMobs($position)){
+							$this->spawn($mob, $position);
+							break;
+						}
+					}
 
-	private function findSafeSpawn(Position $startPos) : ?Position{
-		$world = $startPos->getWorld();
-
-		for($i = 0; $i < self::ATTEMPTS; $i++){
-			$randomX = (int) ($startPos->x + mt_rand(-self::RADIUS, self::RADIUS));
-			$randomY = (int) ($startPos->y + mt_rand(-self::Y_DIFFERENCE, self::Y_DIFFERENCE));
-			$randomZ = (int) ($startPos->z + mt_rand(-self::RADIUS, self::RADIUS));
-
-			//BLOCK UNDER MOB
-			$under = $world->getBlockAt($randomX, $randomY - 1, $randomZ);
-			//BLOCK ABOVE MOB
-			$above1 = $world->getBlockAt($randomX, $randomY, $randomZ)->getTypeId();
-			$above2 = $world->getBlockAt($randomX, $randomY + 1, $randomZ)->getTypeId();
-
-			if($under->isSolid() and $above1 === BlockTypeIds::AIR and $above2 === BlockTypeIds::AIR){
-				return new Position($randomX, $randomY, $randomZ, $world);
-			}
-		}
-		return null;
-	}
-
-	public function despawnMobs() : void{
-		$worldManager = $this->plugin->getServer()->getWorldManager();
-
-		foreach($this->plugin::WORLDS as $mobType => $worldName){
-			$world = $worldManager->getWorldByName($worldName);
-
-			if($world === null){
-				return;
-			}
-
-			foreach($world->getEntities() as $entity){
-				if($entity instanceof AbstractMob){
-					if(count($world->getPlayers()) === 0){
-						$entity->flagForDespawn();
-						return;
+					if($this->isSafeForMobs($mob)){
+						$this->spawn($mob, $position);
+						break;
 					}
 				}
 			}
 		}
 	}
 
-	public function despawnAllMobs() : void{
-		$worldManager = $this->plugin->getServer()->getWorldManager();
+	private function findSpawn(Position $startPos) : ?Position{
+		//In vanilla, it depends on the world simulations distance, we will use the default
+		$radius = 50;
 
-		foreach($this->plugin::WORLDS as $mobType => $worldName){
-			$world = $worldManager->getWorldByName($worldName);
+		$y_difference = 3;
+
+		$world = $startPos->getWorld();
+
+		$randomX = (int) ($startPos->x + mt_rand(-$radius, $radius));
+		$randomY = (int) ($startPos->y + mt_rand(-$y_difference, $y_difference));
+		$randomZ = (int) ($startPos->z + mt_rand(-$radius, $radius));
+
+		return new Position($randomX, $randomY, $randomZ, $world);
+	}
+
+	private function isSafeForMobs(Position $position) : bool{
+		$x = $position->getFloorX();
+		$y = $position->getFloorY();
+		$z = $position->getFloorZ();
+
+		$blockUp = $position->getWorld()->getBlockAt($x, $y + 1, $z);
+		$block = $position->getWorld()->getBlockAt($x, $y, $z);
+		$blockDown = $position->getWorld()->getBlockAt($x, $y - 1, $z);
+
+		if($blockDown->isSolid() and $block->getTypeId() === BlockTypeIds::AIR and $blockUp->getTypeId() === BlockTypeIds::AIR){
+			return true;
+		}
+		return false;
+	}
+
+	private function isSafeForAquaMobs(Position $position) : bool{
+		$x = $position->getFloorX();
+		$y = $position->getFloorY();
+		$z = $position->getFloorZ();
+
+		$blockUp = $position->getWorld()->getBlockAt($x, $y + 1, $z);
+		$block = $position->getWorld()->getBlockAt($x, $y, $z);
+		$blockDown = $position->getWorld()->getBlockAt($x, $y - 1, $z);
+
+		if($blockDown->getTypeId() === BlockTypeIds::WATER and $block->getTypeId() === BlockTypeIds::WATER and $blockUp->getTypeId() === BlockTypeIds::WATER){
+			return true;
+		}
+		return false;
+	}
+
+	public function despawnMobs() : void{
+		foreach($this->plugin::WORLDS as $worldType => $worldName){
+			$world = $this->worldManager->getWorldByName($worldName);
 
 			if($world === null){
 				return;
@@ -176,7 +194,19 @@ class Manager{
 
 			foreach($world->getEntities() as $entity){
 				if($entity instanceof AbstractMob){
-					$entity->flagForDespawn();
+					$near = false;
+
+					foreach($world->getPlayers() as $player){
+						foreach($player->getWorld()->getNearbyEntities($player->getBoundingBox()->expandedCopy(100, 100, 100)) as $e){
+							if($e->getId() !== $entity->getId()){
+								$near = true;
+							}
+						}
+					}
+
+					if($near === true){
+						$entity->flagForDespawn();
+					}
 				}
 			}
 		}
@@ -375,6 +405,10 @@ class Manager{
 			##THE END
 			BiomeIds::THE_END => ["Enderman"],
 		];
+	}
+
+	private function isNight(World $world) : bool{
+		return $world->getTime() >= World::TIME_NIGHT;
 	}
 
 	private function isAquatic(string $mobName) : bool{

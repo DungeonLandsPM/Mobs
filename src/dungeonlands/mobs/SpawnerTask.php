@@ -9,7 +9,7 @@ use pocketmine\scheduler\Task;
 
 #[AllowDynamicProperties]
 class SpawnerTask extends Task{
-	public function __construct(private MobsLoader $plugin){
+	public function __construct(private readonly MobsLoader $plugin){
 		$this->manager = new Manager($this->plugin);
 	}
 
