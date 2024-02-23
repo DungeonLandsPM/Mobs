@@ -118,22 +118,18 @@ use pocketmine\world\World;
 			}
 
 			foreach($positions as $position){
-				if($position instanceof Position){
-					$mobTable = $this->getMobsForBiome($worldName, $world->getBiomeId($position->getFloorX(), $position->getFloorY(), $position->getFloorZ()), $this->isNight($world));
+				$mobTable = $this->getMobsForBiome($worldName, $world->getBiomeId($position->getFloorX(), $position->getFloorY(), $position->getFloorZ()), $this->isNight($world));
 
-					$mob = $mobTable[array_rand($mobTable)];
+				$mob = $mobTable[array_rand($mobTable)];
 
-					if($this->isAquatic($mob)){
-						if($this->isSafeForAquaMobs($position)){
-							$this->spawn($mob, $position);
-							break;
-						}
-					}
+				if($this->isAquatic($mob) and $this->isSafeForAquaMobs($position)){
+					$this->spawn($mob, $position);
+					break;
+				}
 
-					if($this->isSafeForMobs($mob)){
-						$this->spawn($mob, $position);
-						break;
-					}
+				if($this->isSafeForMobs($mob)){
+					$this->spawn($mob, $position);
+					break;
 				}
 			}
 		}
@@ -163,10 +159,7 @@ use pocketmine\world\World;
 		$block = $position->getWorld()->getBlockAt($x, $y, $z);
 		$blockDown = $position->getWorld()->getBlockAt($x, $y - 1, $z);
 
-		if($blockDown->isSolid() and $block->getTypeId() === BlockTypeIds::AIR and $blockUp->getTypeId() === BlockTypeIds::AIR){
-			return true;
-		}
-		return false;
+		return $blockDown->isSolid() and $block->getTypeId() === BlockTypeIds::AIR and $blockUp->getTypeId() === BlockTypeIds::AIR;
 	}
 
 	private function isSafeForAquaMobs(Position $position) : bool{
@@ -178,10 +171,7 @@ use pocketmine\world\World;
 		$block = $position->getWorld()->getBlockAt($x, $y, $z);
 		$blockDown = $position->getWorld()->getBlockAt($x, $y - 1, $z);
 
-		if($blockDown->getTypeId() === BlockTypeIds::WATER and $block->getTypeId() === BlockTypeIds::WATER and $blockUp->getTypeId() === BlockTypeIds::WATER){
-			return true;
-		}
-		return false;
+		return $blockDown->getTypeId() === BlockTypeIds::WATER and $block->getTypeId() === BlockTypeIds::WATER and $blockUp->getTypeId() === BlockTypeIds::WATER;
 	}
 
 	public function despawnMobs() : void{
@@ -198,13 +188,13 @@ use pocketmine\world\World;
 
 					foreach($world->getPlayers() as $player){
 						foreach($player->getWorld()->getNearbyEntities($player->getBoundingBox()->expandedCopy(100, 100, 100)) as $e){
-							if($e->getId() !== $entity->getId()){
+							if($e->getId() === $entity->getId()){
 								$near = true;
 							}
 						}
 					}
 
-					if($near === true){
+					if(!$near){
 						$entity->flagForDespawn();
 					}
 				}
@@ -226,7 +216,7 @@ use pocketmine\world\World;
 	private function getMobsForBiome(string $worldName, int $biomeID, bool $isNight) : array{
 		if($worldName === $this->plugin::WORLDS["overworld"] and $isNight){
 			if(array_key_exists($biomeID, $this->getMobs())){
-				return $this->getNightlyMobs()[BiomeIds::PLAINS];
+				return $this->getNightlyMobs()[$biomeID];
 			}
 		}
 
