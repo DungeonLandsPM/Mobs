@@ -7,19 +7,17 @@ namespace dungeonlands\mobs\entity\hostile;
 use dungeonlands\mobs\entity\AbstractMob;
 use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
 
-class Silverfish extends AbstractMob
-{
-    protected static string $_typeID = EntityIds::SILVERFISH;
+class Silverfish extends AbstractMob{
+	protected static string $_typeID = EntityIds::SILVERFISH;
 
-    protected int $_health = 8;
+	protected int $_health = 8;
 
-    protected float $_speed = 0.25;
+	protected float $_speed = 0.25;
 
-    protected float $_sizeHeight = 0.3;
-    protected float $_sizeWidth = 0.4;
+	protected float $_sizeHeight = 0.3;
+	protected float $_sizeWidth = 0.4;
 
-    public function getXpDropAmount(): int
-    {
-        return 5;
-    }
+	public function getXpDropAmount() : int{
+		return 5;
+	}
 }

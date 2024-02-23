@@ -10,31 +10,28 @@ use pocketmine\item\VanillaItems;
 use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
 use pocketmine\player\Player;
 
-class Squid extends AbstractMob
-{
-    protected static string $_typeID = EntityIds::SQUID;
+class Squid extends AbstractMob{
+	protected static string $_typeID = EntityIds::SQUID;
 
-    protected int $_health = 10;
+	protected int $_health = 10;
 
-    protected float $_speed = 0.7;
+	protected float $_speed = 0.7;
 
-    protected float $_sizeHeight = 0.95;
-    protected float $_sizeWidth = 0.95;
+	protected float $_sizeHeight = 0.95;
+	protected float $_sizeWidth = 0.95;
 
-    public function getDrops(): array
-    {
-        $cause = $this->lastDamageCause;
-        if ($cause instanceof EntityDamageByEntityEvent) {
-            $damager = $cause->getDamager();
-            if ($damager instanceof Player) {
-                return [VanillaItems::INK_SAC()->setCount(mt_rand(1, 3))];
-            }
-        }
-        return [];
-    }
+	public function getDrops() : array{
+		$cause = $this->lastDamageCause;
+		if($cause instanceof EntityDamageByEntityEvent){
+			$damager = $cause->getDamager();
+			if($damager instanceof Player){
+				return [VanillaItems::INK_SAC()->setCount(mt_rand(1, 3))];
+			}
+		}
+		return [];
+	}
 
-    public function getXpDropAmount(): int
-    {
-        return mt_rand(1, 3);
-    }
+	public function getXpDropAmount() : int{
+		return mt_rand(1, 3);
+	}
 }

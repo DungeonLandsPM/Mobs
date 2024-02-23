@@ -18,21 +18,18 @@ use pocketmine\plugin\PluginBase;
  *
  * FEEL FREE TO FORK THE PLUGIN, BUT PLEASE DO NOT COPY EVERYTHING AND CLAIM IT AS YOUR OWN CODE. THANK YOU :)
  */
-class MobsLoader extends PluginBase
-{
-    public const WORLDS = [
-        "overworld" => "overworld",
-        "nether" => "nether",
-        "the_end" => "the_end"
-    ];
+class MobsLoader extends PluginBase{
+	public const WORLDS = [
+		"overworld" => "overworld",
+		"nether" => "nether",
+		"the_end" => "the_end"
+	];
 
-    protected function onEnable(): void
-    {
-        $this->registerTask();
-    }
+	protected function onEnable() : void{
+		$this->registerTask();
+	}
 
-    private function registerTask(): void
-    {
-        $this->getScheduler()->scheduleRepeatingTask(new SpawnerTask($this), 3500);
-    }
+	private function registerTask() : void{
+		$this->getScheduler()->scheduleRepeatingTask(new SpawnerTask($this), 3500);
+	}
 }
