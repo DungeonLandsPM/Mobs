@@ -91,11 +91,6 @@ use pocketmine\world\World;
 		$this->worldManager = $this->plugin->getServer()->getWorldManager();
 	}
 
-	/**
-	 * ANIMALS SPAWNS UPON CHUNK GENERATION/LOADING, BUT THERE IS CURRENTLY NO WAY FOR THIS IN POCKETMINE
-	 * MONSTER SPAWNS IN A CERTAIN RADIUS AROUND THE PLAYER
-	 * MOBS CAN NOT SPAWN ON TRANSPARENT BLOCKS, IN WATER (EXPECT AQUATIC CREATURES), IN LAVA (EXPECT STRIDER), ON BEDROCK, ON LESS THAN A FULL BLOCK TALL (SUCH AS SLABS)
-	 */
 	public function spawnMobs() : void{
 		$amountPerPlayer = 5 * 2; //*2 for the attempts
 
@@ -136,18 +131,15 @@ use pocketmine\world\World;
 	}
 
 	private function findSpawn(Position $startPos) : ?Position{
-		//In vanilla, it depends on the world simulations distance, we will use the default
-		$radius = 50;
+		$radius = 50; //In vanilla, it depends on the world simulations distance, we will use my system default
 
-		$y_difference = 3;
-
-		$world = $startPos->getWorld();
+		$y_difference = 3; //could be changed up to 5
 
 		$randomX = (int) ($startPos->x + mt_rand(-$radius, $radius));
 		$randomY = (int) ($startPos->y + mt_rand(-$y_difference, $y_difference));
 		$randomZ = (int) ($startPos->z + mt_rand(-$radius, $radius));
 
-		return new Position($randomX, $randomY, $randomZ, $world);
+		return new Position($randomX, $randomY, $randomZ, $startPos->getWorld());
 	}
 
 	private function isSafeForMobs(Position $position) : bool{
@@ -187,7 +179,7 @@ use pocketmine\world\World;
 					$near = false;
 
 					foreach($world->getPlayers() as $player){
-						foreach($player->getWorld()->getNearbyEntities($player->getBoundingBox()->expandedCopy(100, 100, 100)) as $e){
+						foreach($player->getWorld()->getNearbyEntities($player->getBoundingBox()->expandedCopy(100, 50, 100)) as $e){ //the default radius is 100x100x100 but for me the y height is not really relevant so we will go with y=50
 							if($e->getId() === $entity->getId()){
 								$near = true;
 							}
