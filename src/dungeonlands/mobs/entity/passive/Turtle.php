@@ -24,8 +24,7 @@ class Turtle extends AbstractMob{
 	public function getDrops() : array{
 		$cause = $this->lastDamageCause;
 		if($cause instanceof EntityDamageByEntityEvent){
-			$damager = $cause->getDamager();
-			if($damager instanceof Player){
+			if($cause->getDamager() instanceof Player){
 				return [VanillaBlocks::SEA_LANTERN()->asItem()->setCount(mt_rand(0, 2)), VanillaItems::BOWL()];
 			}
 		}

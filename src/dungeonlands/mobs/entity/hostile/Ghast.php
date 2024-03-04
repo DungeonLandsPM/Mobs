@@ -23,8 +23,7 @@ class Ghast extends AbstractMob{
 	public function getDrops() : array{
 		$cause = $this->lastDamageCause;
 		if($cause instanceof EntityDamageByEntityEvent){
-			$damager = $cause->getDamager();
-			if($damager instanceof Player){
+			if($cause->getDamager() instanceof Player){
 				return [VanillaItems::GHAST_TEAR()->setCount(mt_rand(0, 1)), VanillaItems::GUNPOWDER()->setCount(mt_rand(0, 2))];
 			}
 		}

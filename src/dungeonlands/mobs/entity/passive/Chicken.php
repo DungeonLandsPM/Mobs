@@ -23,8 +23,7 @@ class Chicken extends AbstractMob{
 	public function getDrops() : array{
 		$cause = $this->lastDamageCause;
 		if($cause instanceof EntityDamageByEntityEvent){
-			$damager = $cause->getDamager();
-			if($damager instanceof Player){
+			if($cause->getDamager() instanceof Player){
 				if($this->isOnFire()){
 					return [VanillaItems::COOKED_CHICKEN(), VanillaItems::FEATHER()->setCount(mt_rand(0, 2))];
 				}

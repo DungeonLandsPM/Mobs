@@ -151,7 +151,7 @@ use pocketmine\world\World;
 		$block = $position->getWorld()->getBlockAt($x, $y, $z);
 		$blockDown = $position->getWorld()->getBlockAt($x, $y - 1, $z);
 
-		return $blockDown->isSolid() and $block->getTypeId() === BlockTypeIds::AIR and $blockUp->getTypeId() === BlockTypeIds::AIR;
+		return !$blockDown->isTransparent() and $block->getTypeId() === BlockTypeIds::AIR and $blockUp->getTypeId() === BlockTypeIds::AIR;
 	}
 
 	private function isSafeForAquaMobs(Position $position) : bool{

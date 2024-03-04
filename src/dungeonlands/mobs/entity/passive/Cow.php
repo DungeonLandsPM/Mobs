@@ -23,8 +23,7 @@ class Cow extends AbstractMob{
 	public function getDrops() : array{
 		$cause = $this->lastDamageCause;
 		if($cause instanceof EntityDamageByEntityEvent){
-			$damager = $cause->getDamager();
-			if($damager instanceof Player){
+			if($cause->getDamager() instanceof Player){
 				if($this->isOnFire()){
 					return [VanillaItems::STEAK()->setCount(mt_rand(1, 3)), VanillaItems::LEATHER()->setCount(mt_rand(0, 2))];
 				}

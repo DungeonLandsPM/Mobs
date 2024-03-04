@@ -25,8 +25,7 @@ class Witch extends AbstractMob{
 	public function getDrops() : array{
 		$cause = $this->lastDamageCause;
 		if($cause instanceof EntityDamageByEntityEvent){
-			$damager = $cause->getDamager();
-			if($damager instanceof Player){
+			if($cause->getDamager() instanceof Player){
 				return [VanillaBlocks::MOB_HEAD()->setMobHeadType(MobHeadType::WITHER_SKELETON)->asItem()->setCount(mt_rand(0, 1)), VanillaItems::BONE()->setCount(mt_rand(0, 2)), VanillaItems::COAL()->setCount(mt_rand(0, 1))];
 			}
 		}

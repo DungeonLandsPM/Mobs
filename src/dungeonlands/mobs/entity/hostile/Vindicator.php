@@ -23,8 +23,7 @@ class Vindicator extends AbstractMob{
 	public function getDrops() : array{
 		$cause = $this->lastDamageCause;
 		if($cause instanceof EntityDamageByEntityEvent){
-			$damager = $cause->getDamager();
-			if($damager instanceof Player){
+			if($cause->getDamager() instanceof Player){
 				return [VanillaItems::EMERALD()->setCount(mt_rand(0, 1))];
 			}
 		}

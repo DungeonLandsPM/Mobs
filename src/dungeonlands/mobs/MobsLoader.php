@@ -19,7 +19,7 @@ use pocketmine\plugin\PluginBase;
  * FEEL FREE TO FORK THE PLUGIN, BUT PLEASE DO NOT COPY EVERYTHING AND CLAIM IT AS YOUR OWN CODE. THANK YOU :)
  */
 class MobsLoader extends PluginBase{
-	public const WORLDS = [
+	public const array WORLDS = [
 		"overworld" => "overworld",
 		"nether" => "nether",
 		"the_end" => "the_end"

@@ -23,8 +23,7 @@ class ElderGuardian extends AbstractMob{
 	public function getDrops() : array{
 		$cause = $this->lastDamageCause;
 		if($cause instanceof EntityDamageByEntityEvent){
-			$damager = $cause->getDamager();
-			if($damager instanceof Player){
+			if($cause->getDamager() instanceof Player){
 				return [VanillaItems::PRISMARINE_SHARD()->setCount(mt_rand(0, 2)), VanillaItems::TIDE_ARMOR_TRIM_SMITHING_TEMPLATE()->setCount(mt_rand(0, 1))];
 			}
 		}

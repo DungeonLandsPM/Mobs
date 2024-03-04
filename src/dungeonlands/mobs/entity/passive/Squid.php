@@ -23,8 +23,7 @@ class Squid extends AbstractMob{
 	public function getDrops() : array{
 		$cause = $this->lastDamageCause;
 		if($cause instanceof EntityDamageByEntityEvent){
-			$damager = $cause->getDamager();
-			if($damager instanceof Player){
+			if($cause->getDamager() instanceof Player){
 				return [VanillaItems::INK_SAC()->setCount(mt_rand(1, 3))];
 			}
 		}
