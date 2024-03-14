@@ -82,17 +82,22 @@ use dungeonlands\mobs\entity\passive\Villager;
 use dungeonlands\mobs\entity\passive\WanderingTrader;
 use pocketmine\block\BlockTypeIds;
 use pocketmine\data\bedrock\BiomeIds;
+use pocketmine\entity\Entity;
 use pocketmine\entity\Location;
+use pocketmine\math\Vector3;
 use pocketmine\world\Position;
 use pocketmine\world\World;
 
 #[AllowDynamicProperties] class Manager{
 	public function __construct(private readonly MobsLoader $plugin){
 		$this->worldManager = $this->plugin->getServer()->getWorldManager();
+
+		$this->mobs = $this->getMobs();
+		$this->nightlyMobs = $this->getNightlyMobs();
 	}
 
 	public function spawnMobs() : void{
-		$amountPerPlayer = 5 * 2; //*2 for the attempts
+		$amountPerPlayer = 5 * 2;
 
 		foreach($this->plugin::WORLDS as $worldType => $worldName){
 			$world = $this->worldManager->getWorldByName($worldName);
@@ -122,7 +127,7 @@ use pocketmine\world\World;
 					break;
 				}
 
-				if($this->isSafeForMobs($mob)){
+				if($this->isSafeForMobs($position)){
 					$this->spawn($mob, $position);
 					break;
 				}
@@ -131,9 +136,9 @@ use pocketmine\world\World;
 	}
 
 	private function findSpawn(Position $startPos) : ?Position{
-		$radius = 50; //In vanilla, it depends on the world simulations distance, we will use my system default
+		$radius = 50; //In vanilla, it depends on the world simulations distance, we will use my system default (android)
 
-		$y_difference = 3; //could be changed up to 5
+		$y_difference = 5; //can be set to 3
 
 		$randomX = (int) ($startPos->x + mt_rand(-$radius, $radius));
 		$randomY = (int) ($startPos->y + mt_rand(-$y_difference, $y_difference));
@@ -151,7 +156,7 @@ use pocketmine\world\World;
 		$block = $position->getWorld()->getBlockAt($x, $y, $z);
 		$blockDown = $position->getWorld()->getBlockAt($x, $y - 1, $z);
 
-		return !$blockDown->isTransparent() and $block->getTypeId() === BlockTypeIds::AIR and $blockUp->getTypeId() === BlockTypeIds::AIR;
+		return $blockDown->isSolid() and $block->getTypeId() === BlockTypeIds::AIR and $blockUp->getTypeId() === BlockTypeIds::AIR;
 	}
 
 	private function isSafeForAquaMobs(Position $position) : bool{
@@ -174,24 +179,33 @@ use pocketmine\world\World;
 				return;
 			}
 
-			foreach($world->getEntities() as $entity){
-				if($entity instanceof AbstractMob){
-					$near = false;
+			$players = $world->getPlayers();
+			$mobs = array_filter($world->getEntities(), function (Entity $entity) {
+				return $entity instanceof AbstractMob;
+			});
 
-					foreach($world->getPlayers() as $player){
-						foreach($player->getWorld()->getNearbyEntities($player->getBoundingBox()->expandedCopy(100, 50, 100)) as $e){ //the default radius is 100x100x100 but for me the y height is not really relevant so we will go with y=50
-							if($e->getId() === $entity->getId()){
-								$near = true;
-							}
-						}
-					}
-
-					if(!$near){
-						$entity->flagForDespawn();
+			$nearbyMobs = array_filter($mobs, function (AbstractMob $mob) use ($players) {
+				foreach ($players as $player) {
+					if ($this->isNearPlayer($mob->getPosition()->asVector3(), $player->getPosition()->asVector3())) {
+						return true;
 					}
 				}
+				return false;
+			});
+
+			$mobsToDespawn = array_filter($mobs, function (AbstractMob $mob) use ($nearbyMobs) {
+				return !in_array($mob, $nearbyMobs, true);
+			});
+
+			foreach ($mobsToDespawn as $mob) {
+				$mob->flagForDespawn();
 			}
 		}
+	}
+
+	private function isNearPlayer(Vector3 $mobLocation, Vector3 $playerLocation, int $radius = 50): bool
+	{
+		return $mobLocation->distanceSquared($playerLocation) <= $radius ** 2;
 	}
 
 	public function spawn(string $mobName, Position $position) : void{
@@ -207,19 +221,19 @@ use pocketmine\world\World;
 
 	private function getMobsForBiome(string $worldName, int $biomeID, bool $isNight) : array{
 		if($worldName === $this->plugin::WORLDS["overworld"] and $isNight){
-			if(array_key_exists($biomeID, $this->getMobs())){
-				return $this->getNightlyMobs()[$biomeID];
+			if(array_key_exists($biomeID, $this->mobs)){
+				return $this->nightlyMobs[$biomeID];
 			}
 		}
 
-		if(array_key_exists($biomeID, $this->getMobs())){
-			return $this->getMobs()[$biomeID];
+		if(array_key_exists($biomeID, $this->mobs)){
+			return $this->mobs[$biomeID];
 		}
 
 		return match ($worldName) {
-			$this->plugin::WORLDS["nether"] => $this->getMobs()[BiomeIds::HELL],
-			$this->plugin::WORLDS["the_end"] => $this->getMobs()[BiomeIds::THE_END],
-			default => $this->getMobs()[BiomeIds::PLAINS]
+			$this->plugin::WORLDS["nether"] => $this->mobs[BiomeIds::HELL],
+			$this->plugin::WORLDS["the_end"] => $this->mobs[BiomeIds::THE_END],
+			default => $this->mobs[BiomeIds::PLAINS]
 		};
 	}
 

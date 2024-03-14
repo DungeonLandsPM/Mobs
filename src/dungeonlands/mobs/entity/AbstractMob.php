@@ -9,7 +9,7 @@ use pocketmine\entity\Living;
 use pocketmine\nbt\tag\CompoundTag;
 
 abstract class AbstractMob extends Living{
-	protected static string $_typeID = "minecraft:npc";
+	protected static string $_typeID = "minecraft:cow";
 
 	protected int $_health = 20;
 
