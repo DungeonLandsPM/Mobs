@@ -156,7 +156,7 @@ use pocketmine\world\World;
 		$block = $position->getWorld()->getBlockAt($x, $y, $z);
 		$blockDown = $position->getWorld()->getBlockAt($x, $y - 1, $z);
 
-		return $blockDown->isSolid() and $block->getTypeId() === BlockTypeIds::AIR and $blockUp->getTypeId() === BlockTypeIds::AIR;
+		return !$blockDown->isTransparent() and $block->getTypeId() === BlockTypeIds::AIR and $blockUp->getTypeId() === BlockTypeIds::AIR;
 	}
 
 	private function isSafeForAquaMobs(Position $position) : bool{
@@ -180,31 +180,30 @@ use pocketmine\world\World;
 			}
 
 			$players = $world->getPlayers();
-			$mobs = array_filter($world->getEntities(), function (Entity $entity) {
+			$mobs = array_filter($world->getEntities(), function(Entity $entity){
 				return $entity instanceof AbstractMob;
 			});
 
-			$nearbyMobs = array_filter($mobs, function (AbstractMob $mob) use ($players) {
-				foreach ($players as $player) {
-					if ($this->isNearPlayer($mob->getPosition()->asVector3(), $player->getPosition()->asVector3())) {
+			$nearbyMobs = array_filter($mobs, function(AbstractMob $mob) use ($players){
+				foreach($players as $player){
+					if($this->isNearPlayer($mob->getPosition()->asVector3(), $player->getPosition()->asVector3())){
 						return true;
 					}
 				}
 				return false;
 			});
 
-			$mobsToDespawn = array_filter($mobs, function (AbstractMob $mob) use ($nearbyMobs) {
+			$mobsToDespawn = array_filter($mobs, function(AbstractMob $mob) use ($nearbyMobs){
 				return !in_array($mob, $nearbyMobs, true);
 			});
 
-			foreach ($mobsToDespawn as $mob) {
+			foreach($mobsToDespawn as $mob){
 				$mob->flagForDespawn();
 			}
 		}
 	}
 
-	private function isNearPlayer(Vector3 $mobLocation, Vector3 $playerLocation, int $radius = 50): bool
-	{
+	private function isNearPlayer(Vector3 $mobLocation, Vector3 $playerLocation, int $radius = 50) : bool{
 		return $mobLocation->distanceSquared($playerLocation) <= $radius ** 2;
 	}
 
